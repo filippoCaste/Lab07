@@ -36,7 +36,6 @@ public class ConnectDB {
 		try {
 			return ds.getConnection();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			System.err.println("Errore di connessione ad db");
 			throw new RuntimeException(e);
 		}

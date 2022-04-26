@@ -39,6 +39,17 @@ public class FXMLController {
     @FXML
     void doRun(ActionEvent event) {
     	txtResult.clear();
+    	Integer X = null;
+    	Integer Y = null;
+    	final Nerc nerc = this.cmbNerc.getValue();
+    	try {
+    		X = Integer.parseInt(this.txtHours.getText());
+    		Y = Integer.parseInt(this.txtYears.getText());
+    	} catch(NumberFormatException nfe) {
+    		nfe.printStackTrace();
+    		txtResult.setText("Devi inserire valori numerici nel campo ore e anni");
+    	}
+    	this.txtResult.setText(this.model.maximizeVictims(X, Y, nerc));
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -54,5 +65,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.cmbNerc.getItems().addAll(this.model.getNercList());
     }
 }
