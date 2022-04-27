@@ -118,6 +118,11 @@ public class PowerOutage {
 		return Objects.equals(id, other.id);
 	}
 	
+	@Override
+	public String toString() {
+		return this.id + " " + this.duration + "h " + this.date_event_began + " - " + this.date_event_finished + " " + this.customers_affected + " affected customers;";
+	}
+	
 	// ---------------------------------------------------------------------
 	public void calculateHoursOfOutage() {
 		this.duration = this.date_event_began.until(this.date_event_finished, ChronoUnit.HOURS);

@@ -22,8 +22,8 @@ public class Model {
 		return podao.getNercList();
 	}
 	
-	public List<PowerOutage> getPowerOutageList(int i) {
-		return podao.getPowerOutages(i);
+	public List<PowerOutage> getPowerOutageList(int nerc) {
+		return podao.getPowerOutages(nerc);
 	}
 	
 	public List<PowerOutage> getPowerOutage() {
@@ -38,37 +38,32 @@ public class Model {
 		String output="Il massimo numero di affected customers è: " + this.victims + "\nIl totale di ore di disservizio è stato di: " + this.hours +
 				"\nI disservizi si sono verificati nelle seguenti date:";
 		for(PowerOutage po : this.result) {
-			output+="\n	 "+po.toString();
+			output+="\n	"+po.toString();
 		}
 		return output;
 	}
 
 	private void maximize_recursive(int level, List<PowerOutage> outagesList, int X, int Y, List<PowerOutage> partial, long hours, int affected) {
-		// ending condition
+		// ending conditions
 		
-		if(hours==Y) {
-			this.result = partial;
-			this.victims = affected;
-			this.hours = hours;
+		if(hours > X) { // devo tornare indietro 
 			return ;
 		}
 
-		if(affected > this.victims && X > this.hours && !partial.isEmpty()) {
-			this.result = partial;
+		if(affected > this.victims && hours <= X) {
+			this.result = new ArrayList<>( partial);
 			this.victims = affected;
 			this.hours = hours;
-			return ;
 		}
 		
 		// recursive step
 		
 		for(PowerOutage po : outagesList) {
-			if(level == 0) {
-				partial.add(po);
-			}
-			else if((po.getDate_event_began().getYear() - partial.get(0).getDate_event_began().getYear()) > Y) {
+			
+			if(level!=0 && (po.getDate_event_began().getYear() - partial.get(0).getDate_event_began().getYear()) > Y) {
 				continue;
 			}
+			partial.add(po);
 			List<PowerOutage> newOutagesList = new ArrayList<>(outagesList);
 			newOutagesList.remove(po);
 			hours += po.getDuration();
@@ -80,6 +75,7 @@ public class Model {
 			partial.remove(po);
 			hours -= po.getDuration();
 			affected -= po.getCustomers_affected();
-	}			
+		}	
+		return;
 	}
 }
