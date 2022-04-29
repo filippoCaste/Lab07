@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.polito.tdp.poweroutages.DAO.PowerOutageDAO;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 public class Model {
+	
+	private Logger logger = LoggerFactory.getLogger(Model.class);
 	
 	private PowerOutageDAO podao;
 	private Integer victims;
@@ -60,21 +63,31 @@ public class Model {
 		
 		for(PowerOutage po : outagesList) {
 			
-			if(level!=0 && (po.getDate_event_began().getYear() - partial.get(0).getDate_event_began().getYear()) > Y) {
-				continue;
-			}
+			/* non migliora i tempi!! */
+//			if(level!=0 && (po.getDate_event_began().getYear() - partial.get(0).getDate_event_began().getYear()) > Y) {
+//				continue;
+//			}
 			partial.add(po);
 			List<PowerOutage> newOutagesList = new ArrayList<>(outagesList);
 			newOutagesList.remove(po);
-			hours += po.getDuration();
-			affected += po.getCustomers_affected();
+			
+			/* con variabili si ha leggero miglioramento perché chiama solo una volta */
+			long add = po.getDuration();
+			int addCus = po.getCustomers_affected();
+			
+			hours += add;
+			affected += addCus;
+			
 			this.maximize_recursive(++level, newOutagesList, X, Y, partial, hours, affected);
+
+			// i tempi aumentano parecchio!
+			// logger.info("Backtracking al livello {}", level);
 			
 			/* BACKTRACKING */
 			level--;
 			partial.remove(po);
-			hours -= po.getDuration();
-			affected -= po.getCustomers_affected();
+			hours -= add;
+			affected -= addCus;
 		}	
 		return;
 	}

@@ -49,7 +49,10 @@ public class FXMLController {
     		nfe.printStackTrace();
     		txtResult.setText("Devi inserire valori numerici nel campo ore e anni");
     	}
+    	long startTime = System.currentTimeMillis();
     	this.txtResult.setText(this.model.maximizeVictims(X, Y, nerc));
+    	long endTime = System.currentTimeMillis();
+    	this.txtResult.appendText("\n\nTempo di completamento: "+(endTime-startTime) + " ms");
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
