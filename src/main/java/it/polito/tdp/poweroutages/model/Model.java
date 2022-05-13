@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 public class Model {
 	
+	@SuppressWarnings("unused")
 	private Logger logger = LoggerFactory.getLogger(Model.class);
 	
 	private PowerOutageDAO podao;
@@ -37,7 +38,7 @@ public class Model {
 		List<PowerOutage> outagesList = new ArrayList<>(this.getPowerOutageList(nerc.getId()));
 		this.result = new ArrayList<>();
 		
-		this.maximize_recursive(0, outagesList, X, Y, new ArrayList<PowerOutage>(), 0, 0);
+		this.maximize_recursive(outagesList, X, Y, new ArrayList<PowerOutage>(), 0, 0);
 		String output="Il massimo numero di affected customers è: " + this.victims + "\nIl totale di ore di disservizio è stato di: " + this.hours +
 				"\nI disservizi si sono verificati nelle seguenti date:";
 		for(PowerOutage po : this.result) {
@@ -46,7 +47,7 @@ public class Model {
 		return output;
 	}
 
-	private void maximize_recursive(int level, List<PowerOutage> outagesList, int X, int Y, List<PowerOutage> partial, long hours, int affected) {
+	private void maximize_recursive(List<PowerOutage> outagesList, int X, int Y, List<PowerOutage> partial, long hours, int affected) {
 		// ending conditions
 		
 		if(hours > X) { // devo tornare indietro 
@@ -78,13 +79,12 @@ public class Model {
 			hours += add;
 			affected += addCus;
 			
-			this.maximize_recursive(++level, newOutagesList, X, Y, partial, hours, affected);
+			this.maximize_recursive(newOutagesList, X, Y, partial, hours, affected);
 
 			// i tempi aumentano parecchio!
 			// logger.info("Backtracking al livello {}", level);
 			
 			/* BACKTRACKING */
-			level--;
 			partial.remove(po);
 			hours -= add;
 			affected -= addCus;
